@@ -1,8 +1,8 @@
 {
-  "name": "css-ctrl-compiler",
-  "displayName": "CSS-CTRL Compiler",
+  "name": "css-ctrl-handler",
+  "displayName": "CSS-CTRL Handler",
   "description": "VSCode Intellisense (Autocompletion) for *.ctrl.ts files in CSS-CTRL",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "publisher": "punlx",
   "engines": {
     "vscode": "^1.80.0"
@@ -21,9 +21,9 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "CSS-CTRL Compiler Settings",
+      "title": "CSS-CTRL Handler Settings",
       "properties": {
-        "CssCtrlCompiler.themeFile": {
+        "CssCtrlHandler.themeFile": {
           "type": "string",
           "default": "ctrl.theme.ts",
           "description": "Relative path to your ctrl.theme.ts"
@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/punlx/css-ctrl-compiler"
+    "url": "https://github.com/punlx/css-ctrl-handler"
   },
   "scripts": {
     "compile": "tsc -p .",
