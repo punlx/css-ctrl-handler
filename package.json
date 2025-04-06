@@ -1,6 +1,6 @@
 {
   "name": "css-ctrl-handler",
-  "displayName": "Css-CTRL Handler",
+  "displayName": "CSS-CTRL Handler",
   "description": "VSCode Intellisense (Autocompletion) for *.ctrl.ts files in CSS-CTRL",
   "version": "0.0.1",
   "publisher": "punlx",
