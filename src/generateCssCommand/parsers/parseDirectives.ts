@@ -51,6 +51,9 @@ export function parseDirectives(text: string): {
   while ((dMatch = directiveRegex.exec(newText)) !== null) {
     const dirName = dMatch[1];
     const dirValue = dMatch[2].trim();
+    if (dirName === 'use' || dirName === 'query') {
+      continue;
+    }
 
     // (NEW) ถ้าเป็น @scope => ตรวจว่าค่าเป็น none, hash หรือเป็นชื่อปกติ
     // คุณอาจมี regex ตรวจพิเศษสำหรับ scopeName ก็ได้
