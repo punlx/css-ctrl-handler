@@ -6,8 +6,9 @@ import { extractQueryBlocks } from '../utils/extractQueryBlocks';
 import { mergeStyleDef } from '../utils/mergeStyleDef';
 import { createEmptyStyleDef } from './createEmptyStyleDef';
 
-// (NEW) import generateClassId สำหรับทำ hash
-import { generateClassId } from './hash';
+// (NEW) import makeFinalName สำหรับทำ hash / scope
+import { makeFinalName } from '../utils/sharedScopeUtils';
+// ^^^ ปรับเส้นทาง import ตามตำแหน่งจริงของไฟล์ sharedScopeUtils.ts
 
 export function processClassBlocks(
   scopeName: string,
@@ -20,6 +21,7 @@ export function processClassBlocks(
   for (const block of classBlocks) {
     const clsName = block.className;
 
+    // ป้องกัน Duplicate class ซ้ำกันในไฟล์เดียวกัน
     if (localClasses.has(clsName)) {
       throw new Error(
         `[SWD-ERR] Duplicate class ".${clsName}" in scope "${scopeName}" (same file).`
@@ -27,7 +29,7 @@ export function processClassBlocks(
     }
     localClasses.add(clsName);
 
-    // สร้าง styleDef เปล่า
+    // สร้าง styleDef ว่าง
     const classStyleDef = createEmptyStyleDef();
 
     // (A) แยก @query block
@@ -38,7 +40,7 @@ export function processClassBlocks(
     }));
     classStyleDef.queries = realQueryBlocks;
 
-    // (B) parse line ปกติ + @use
+    // (B) แยก @use กับ line ปกติ
     const lines = newBody
       .split('\n')
       .map((l) => l.trim())
@@ -59,6 +61,7 @@ export function processClassBlocks(
       }
     }
 
+    // (C) mergeConst ถ้ามี
     if (usedConstNames.length > 0) {
       for (const cName of usedConstNames) {
         if (!constMap.has(cName)) {
@@ -69,17 +72,17 @@ export function processClassBlocks(
       }
     }
 
-    // parse normal lines
+    // (D) parse normal lines => parseSingleAbbr
     for (const ln of normalLines) {
       parseSingleAbbr(ln, classStyleDef);
     }
 
-    // (C) parse ภายใน query
+    // (E) parse lines ภายใน @query blocks
     for (let i = 0; i < realQueryBlocks.length; i++) {
       const qBlock = realQueryBlocks[i];
       const qRawBody = queries[i].rawBody;
 
-      // copy localVars จาก parent -> qStyleDef
+      // copy localVars จาก parent
       if (!qBlock.styleDef.localVars) {
         qBlock.styleDef.localVars = {};
       }
@@ -97,8 +100,7 @@ export function processClassBlocks(
 
       for (const qLn of qLines) {
         if (qLn.startsWith('@use ')) {
-          const tokens = qLn.replace('@use', '').trim().split(/\s+/);
-          usedConstNamesQ.push(...tokens);
+          usedConstNamesQ.push(...qLn.replace('@use', '').trim().split(/\s+/));
         } else {
           normalQLines.push(qLn);
         }
@@ -109,6 +111,7 @@ export function processClassBlocks(
           throw new Error(`[SWD-ERR] @use unknown const "${cName}" in @query block.`);
         }
         const partialDef = constMap.get(cName)!;
+        // ห้าม partialDef.hasRuntimeVar => throw ...
         if (partialDef.hasRuntimeVar) {
           throw new Error(
             `[SWD-ERR] @use "${cName}" has $variable, not allowed inside @query block.`
@@ -117,13 +120,12 @@ export function processClassBlocks(
         mergeStyleDef(qBlock.styleDef, partialDef);
       }
 
-      // parse normal lines ใน query
-      for (const ln of normalQLines) {
-        parseSingleAbbr(ln, qBlock.styleDef, false, true);
+      for (const qLn of normalQLines) {
+        parseSingleAbbr(qLn, qBlock.styleDef, false, true);
       }
     }
 
-    // (D) ตรวจว่ามี local var ใช้ก่อนประกาศไหม
+    // (F) ตรวจว่าใช้ local var ก่อนประกาศหรือไม่
     if ((classStyleDef as any)._usedLocalVars) {
       for (const usedVar of (classStyleDef as any)._usedLocalVars) {
         if (!classStyleDef.localVars || !(usedVar in classStyleDef.localVars)) {
@@ -147,23 +149,12 @@ export function processClassBlocks(
       }
     }
 
-    // (E) สร้าง finalKey ตาม scopeName
-    let finalKey: string;
-
-    if (scopeName === 'none') {
-      // 1) scope=none => ใช้ชื่อคลาสล้วน
-      finalKey = clsName;
-    } else if (scopeName === 'hash') {
-      // 2) scope=hash => เอา clsName + block.body => generateClassId => เช่น "box_abc123"
-      const hashStr = clsName + block.body;
-      const hashedPart = generateClassId(hashStr);
-      finalKey = `${clsName}_${hashedPart}`;
-    } else {
-      // 3) scope=ปกติ => "myscope_box"
-      finalKey = `${scopeName}_${clsName}`;
-    }
+    // (G) ใช้ฟังก์ชันกลาง makeFinalName(...) แทน if-else
+    //     สมมติ block.body => ตัวช่วยคำนวณ hash
+    const finalKey = makeFinalName(scopeName, clsName, block.body);
 
     // เก็บลง map
+    // finalKey = ".box_abc123" หรือ "scope_box" ...
     result.set(finalKey, classStyleDef);
   }
 
