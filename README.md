@@ -1,6 +1,6 @@
-# CSS-CTRL Handler
+# CSS-CTRL Compiler
 
-A VSCode extension that provides autocompletion (Intellisense) for [**CSS-CTRL Handler**](https://github.com/punlx/css-ctrl-handler) in `*.ctrl.ts` files. It parses abbreviations like `bg[`, `c[`, `bd[`, etc., and also automatically detects and reads your `ctrl.theme.ts` file to suggest color variables (e.g., `--blue-100`) upon typing `--`.
+A VSCode extension that provides autocompletion (Intellisense) for [**CSS-CTRL Compiler**](https://github.com/punlx/css-ctrl-compiler) in `*.ctrl.ts` files. It parses abbreviations like `bg[`, `c[`, `bd[`, etc., and also automatically detects and reads your `ctrl.theme.ts` file to suggest color variables (e.g., `--blue-100`) upon typing `--`.
 
 ## Features
 

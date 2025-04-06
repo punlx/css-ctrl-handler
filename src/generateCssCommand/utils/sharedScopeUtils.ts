@@ -43,43 +43,10 @@ export function makeFinalName(scopeName: string, className: string, body?: strin
   if (scopeName === 'none') {
     return className;
   } else if (scopeName === 'hash') {
-    const hashedPart = generateClassId(className + (body || ''));
+    const trimmed = (body || '').replace(/\s+/g, '');
+    const hashedPart = generateClassId(className + trimmed);
     return `${className}_${hashedPart}`;
   } else {
     return `${scopeName}_${className}`;
   }
-}
-
-/************************************************************
- * 3) parseFinalName(finalName)
- *    - ถ้าหา '_' ไม่เจอ => scope='none', cls=finalName
- *    - ถ้าเจอ => แบ่งซีกซ้าย/ขวา
- *    - เช็ค rightPart ว่าเป็น hashed หรือไม่
- *      (เช่น length 4..8 + regex => 'hash')
- *      ถ้าใช้ => scope='hash', cls=finalName
- *      ไม่งั้น => scope=leftPart, cls=rightPart
- ************************************************************/
-export function parseFinalName(finalName: string): {
-  scope: string;
-  cls: string;
-} {
-  const underscoreIdx = finalName.indexOf('_');
-  if (underscoreIdx < 0) {
-    // ไม่มี '_' => scope=none
-    return { scope: 'none', cls: finalName };
-  }
-  // แยก
-  const leftPart = finalName.slice(0, underscoreIdx); // ซีกซ้าย
-  const rightPart = finalName.slice(underscoreIdx + 1); // ซีกขวา
-
-  // สมมติ: ถ้า rightPart มีความยาว 4..8 + ตัวอักษร a-zA-Z0-9- => ถือว่าเป็น hashed
-  // => scope='hash', cls=finalName (ทั้งก้อน)
-  if (rightPart.length >= 4 && rightPart.length <= 10) {
-    if (/^[A-Za-z0-9-]+$/.test(rightPart)) {
-      // treat เป็น hash
-      return { scope: 'hash', cls: finalName };
-    }
-  }
-  // ไม่เข้าเงื่อนไข => scope=leftPart, cls=rightPart
-  return { scope: leftPart, cls: rightPart };
 }

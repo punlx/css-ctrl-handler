@@ -283,5 +283,5 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  console.log('CSS-CTRL Handler is now deactivated.');
+  console.log('CSS-CTRL Compiler is now deactivated.');
 }

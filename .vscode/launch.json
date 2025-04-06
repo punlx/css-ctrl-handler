@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch CSS-CTRL Handler Extension",
+      "name": "Launch CSS-CTRL Compiler Extension",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/out/extension.js",
