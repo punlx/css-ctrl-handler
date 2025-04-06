@@ -1,0 +1,58 @@
+{
+  "name": "styledwind-intellisense",
+  "displayName": "Styledwind CSS Intellisense",
+  "description": "VSCode Intellisense (Autocompletion) for *.swd.ts files in Styledwind",
+  "version": "0.0.1",
+  "publisher": "punlx",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "styledwind.createSwdCssAndGenerate",
+        "title": "Styledwind: Create .swd.css And Generate Type"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Styledwind Intellisense Settings",
+      "properties": {
+        "styledwindIntellisense.themeFile": {
+          "type": "string",
+          "default": "styledwind.theme.ts",
+          "description": "Relative path to your styledwind.theme.ts"
+        }
+      }
+    },
+    "grammars": [
+      {
+        "scopeName": "source.css.styledwind",
+        "path": "./syntaxes/styledwind.tmLanguage.json",
+        "injectTo": [
+          "source.ts",
+          "source.tsx"
+        ]
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/punlx/styledwind-intellisense"
+  },
+  "scripts": {
+    "compile": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.0.2",
+    "vsce": "^2.x"
+  },
+  "icon": "icon.png"
+}
