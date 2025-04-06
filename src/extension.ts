@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
 
-// --- (NEW) import createStyledwindThemeCssFile ---
-import { createSwdThemeCssFile } from './generateCssCommand/createSwdThemeCssCommand';
+// --- (NEW) import createCssCtrlThemeCssFile ---
+import { createCssCtrlThemeCssFile } from './generateCssCommand/createCssCtrlThemeCssCommand';
 
-// import validateSwdDoc.ts ซึ่งไว้ parse-check ใส่ Diagnostic
-import { validateSwdDoc } from './generateCssCommand/validateSwdDoc';
+// import validateCssCtrlDoc.ts ซึ่งไว้ parse-check ใส่ Diagnostic
+import { validateCssCtrlDoc } from './generateCssCommand/validateCssCtrlDoc';
 
-// import createSwdCssFile (จากโค้ดข้างบน)
-import { createSwdCssFile } from './generateCssCommand/createSwdCssCommand';
+// import createCssCtrlCssFile (จากโค้ดข้างบน)
+import { createCssCtrlCssFile } from './generateCssCommand/createCssCtrlCssCommand';
 
-// generateGenericProvider (command "styledwind.generateGeneric")
+// generateGenericProvider (command "ctrl.generateGeneric")
 import { generateGenericProvider } from './generateGenericProvider';
 
 /* -------------------------------------------------------------------------
@@ -36,10 +36,10 @@ import { createSpacingProvider } from './variableProvider';
 import { createBindClassProvider } from './createBindClassProvider';
 import { createColorProvider } from './colorProvider';
 import { createDirectiveProvider } from './directiveProvider';
-import { createSwdSnippetProvider } from './createSwdSnippetProvider';
+import { createCssCtrlSnippetProvider } from './createCssCtrlSnippetProvider';
 import { createUseConstProvider } from './createUseConstProvider';
 import { createLocalVarProvider } from './localVarProvider';
-import { createStyledwindThemeColorProvider } from './themePaletteColorProvider';
+import { createCssCtrlThemeColorProvider } from './themePaletteColorProvider';
 import { createCssTsColorProvider, initPaletteMap } from './cssTsColorProvider';
 import { createModeSuggestionProvider } from './modeSuggestionProvider';
 import { createQueryPseudoProvider } from './createQueryPseudoProvider';
@@ -49,18 +49,18 @@ import { createDefineProvider } from './defineProvider';
 import { createDefineTopKeyProvider } from './defineTopKeyProvider';
 
 /* ------------------ (NEW) import & use for defineFull parsing ------------------ */
-import { globalDefineMap } from './generateCssCommand/createSwdCssCommand';
+import { globalDefineMap } from './generateCssCommand/createCssCtrlCssCommand';
 import { createEmptyStyleDef } from './generateCssCommand/helpers/createEmptyStyleDef';
 import { parseSingleAbbr } from './generateCssCommand/parsers/parseSingleAbbr';
 export let globalBreakpointDict: Record<string, string> = {};
 export let globalTypographyDict: Record<string, string> = {};
 
 export async function activate(context: vscode.ExtensionContext) {
-  console.log('Styledwind Intellisense is now active!');
+  console.log('Css-CTRL Intellisense is now active!');
 
   // สร้าง DiagnosticCollection สำหรับ validate
-  const styledwindDiagnosticCollection = vscode.languages.createDiagnosticCollection('styledwind');
-  context.subscriptions.push(styledwindDiagnosticCollection);
+  const cssCtrlDiagnosticCollection = vscode.languages.createDiagnosticCollection('ctrl');
+  context.subscriptions.push(cssCtrlDiagnosticCollection);
 
   // parse theme ...
   await initPaletteMap();
@@ -77,7 +77,7 @@ export async function activate(context: vscode.ExtensionContext) {
   if (vscode.workspace.workspaceFolders?.length) {
     try {
       const foundUris = await vscode.workspace.findFiles(
-        '**/styledwind.theme.ts',
+        '**/ctrl.theme.ts',
         '**/node_modules/**',
         1
       );
@@ -108,10 +108,10 @@ export async function activate(context: vscode.ExtensionContext) {
   const spacingProvider = createSpacingProvider(spacingDict);
   const directiveProvider = createDirectiveProvider();
   const bindClassProvider = createBindClassProvider();
-  const swdSnippetProvider = createSwdSnippetProvider();
+  const ctrlSnippetProvider = createCssCtrlSnippetProvider();
   const useConstProvider = createUseConstProvider();
   const localVarProviderDisposable = createLocalVarProvider();
-  const paletteProvider = createStyledwindThemeColorProvider();
+  const paletteProvider = createCssCtrlThemeColorProvider();
   const cssTsColorProviderDisposable = createCssTsColorProvider();
   const commentModeSuggestionProvider = createModeSuggestionProvider();
   const defineProviderDisposable = createDefineProvider(defineMap);
@@ -129,7 +129,7 @@ export async function activate(context: vscode.ExtensionContext) {
     spacingProvider,
     directiveProvider,
     bindClassProvider,
-    swdSnippetProvider,
+    ctrlSnippetProvider,
     useConstProvider,
     paletteProvider,
     cssTsColorProviderDisposable,
@@ -194,48 +194,48 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   // --------------------------------------------------------------------------------
-  // สแกนไฟล์ .swd.ts ทั้งหมด -> validateSwdDoc
+  // สแกนไฟล์ .ctrl.ts ทั้งหมด -> validateCssCtrlDoc
   // --------------------------------------------------------------------------------
-  const swdUris = await vscode.workspace.findFiles('**/*.swd.ts', '**/node_modules/**');
-  for (const uri of swdUris) {
+  const ctrlUris = await vscode.workspace.findFiles('**/*.ctrl.ts', '**/node_modules/**');
+  for (const uri of ctrlUris) {
     const doc = await vscode.workspace.openTextDocument(uri);
-    validateSwdDoc(doc, styledwindDiagnosticCollection);
+    validateCssCtrlDoc(doc, cssCtrlDiagnosticCollection);
   }
 
   // --------------------------------------------------------------------------------
-  // เมื่อ save ไฟล์ .swd.ts => validate ใหม่ ถ้าไม่ error => generate
+  // เมื่อ save ไฟล์ .ctrl.ts => validate ใหม่ ถ้าไม่ error => generate
   // --------------------------------------------------------------------------------
   const saveDisposable = vscode.workspace.onDidSaveTextDocument(async (savedDoc) => {
-    if (savedDoc.fileName.endsWith('.swd.ts')) {
+    if (savedDoc.fileName.endsWith('.ctrl.ts')) {
       // validate
-      validateSwdDoc(savedDoc, styledwindDiagnosticCollection);
+      validateCssCtrlDoc(savedDoc, cssCtrlDiagnosticCollection);
 
       // check ถ้ายังมี error => ไม่ generate
-      const diags = styledwindDiagnosticCollection.get(savedDoc.uri);
+      const diags = cssCtrlDiagnosticCollection.get(savedDoc.uri);
       const hasErr = diags && diags.some((d) => d.severity === vscode.DiagnosticSeverity.Error);
       if (hasErr) {
         return;
       }
 
-      // ถ้าไม่มี error => createSwdCssFile
+      // ถ้าไม่มี error => createCssCtrlCssFile
       try {
-        await createSwdCssFile(savedDoc);
+        await createCssCtrlCssFile(savedDoc);
       } catch (err) {
         return;
       }
 
-      // no error => styledwind.generateGeneric
-      await vscode.commands.executeCommand('styledwind.generateGeneric');
-      // vscode.window.showInformationMessage('Created .swd.css and Generated Generic done!');
+      // no error => ctrl.generateGeneric
+      await vscode.commands.executeCommand('ctrl.generateGeneric');
+      // vscode.window.showInformationMessage('Created .ctrl.css and Generated Generic done!');
     }
   });
   context.subscriptions.push(saveDisposable);
 
   // --------------------------------------------------------------------------------
-  // Command สร้างไฟล์ .swd.css และ generate
+  // Command สร้างไฟล์ .ctrl.css และ generate
   // --------------------------------------------------------------------------------
   const combinedCommand = vscode.commands.registerCommand(
-    'styledwind.createSwdCssAndGenerate',
+    'ctrl.createCssCtrlCssAndGenerate',
     async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
@@ -243,36 +243,36 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      validateSwdDoc(editor.document, styledwindDiagnosticCollection);
-      const diags = styledwindDiagnosticCollection.get(editor.document.uri);
+      validateCssCtrlDoc(editor.document, cssCtrlDiagnosticCollection);
+      const diags = cssCtrlDiagnosticCollection.get(editor.document.uri);
       const hasErr = diags && diags.some((d) => d.severity === vscode.DiagnosticSeverity.Error);
       if (hasErr) {
         return;
       }
 
       try {
-        await createSwdCssFile(editor.document);
+        await createCssCtrlCssFile(editor.document);
       } catch (err) {
         return;
       }
 
-      await vscode.commands.executeCommand('styledwind.generateGeneric');
+      await vscode.commands.executeCommand('ctrl.generateGeneric');
     }
   );
   context.subscriptions.push(combinedCommand);
 
   // --------------------------------------------------------------------------------
-  // (NEW) เมื่อ save ไฟล์ styledwind.theme.ts => generate styledwind.theme.css
+  // (NEW) เมื่อ save ไฟล์ ctrl.theme.ts => generate ctrl.theme.css
   // --------------------------------------------------------------------------------
   const themeSaveDisposable = vscode.workspace.onDidSaveTextDocument(async (savedDoc) => {
-    if (savedDoc.fileName.endsWith('styledwind.theme.ts')) {
+    if (savedDoc.fileName.endsWith('ctrl.theme.ts')) {
       try {
         // (คุณจะ validate อะไรก่อนก็ได้)
-        await createSwdThemeCssFile(savedDoc);
-        // vscode.window.showInformationMessage('styledwind.theme.css generated successfully!');
+        await createCssCtrlThemeCssFile(savedDoc);
+        // vscode.window.showInformationMessage('ctrl.theme.css generated successfully!');
       } catch (error) {
         // handle error
-        console.error('Error generating styledwind.theme.css =>', error);
+        console.error('Error generating ctrl.theme.css =>', error);
       }
     }
   });
@@ -280,5 +280,5 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  console.log('Styledwind Intellisense is now deactivated.');
+  console.log('CSS-CTRL Handler is now deactivated.');
 }

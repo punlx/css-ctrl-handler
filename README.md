@@ -1,28 +1,28 @@
-# Styledwind Intellisense
+# CSS-CTRL Handler
 
-A VSCode extension that provides autocompletion (Intellisense) for [**Styledwind**](https://github.com/punlx/styledwind-intellisense) in `*.swd.ts` files. It parses abbreviations like `bg[`, `c[`, `bd[`, etc., and also automatically detects and reads your `styledwind.theme.ts` file to suggest color variables (e.g., `--blue-100`) upon typing `--`.
+A VSCode extension that provides autocompletion (Intellisense) for [**CSS-CTRL Handler**](https://github.com/punlx/css-ctrl-handler) in `*.ctrl.ts` files. It parses abbreviations like `bg[`, `c[`, `bd[`, etc., and also automatically detects and reads your `ctrl.theme.ts` file to suggest color variables (e.g., `--blue-100`) upon typing `--`.
 
 ## Features
 
 1. **Bracket-Based Property Suggestions**
 
-   - When you type `bg[`, `c[`, `jc[`, etc. in a `.swd.ts` file, this extension will suggest CSS values defined in its internal map or your custom definitions.
+   - When you type `bg[`, `c[`, `jc[`, etc. in a `.ctrl.ts` file, this extension will suggest CSS values defined in its internal map or your custom definitions.
    - For example, typing `bg[` will list color values like `red`, `blue`, `green`, etc.
 
 2. **Automatic Theme Detection**
 
-   - The extension searches for `styledwind.theme.ts` in your project.
+   - The extension searches for `ctrl.theme.ts` in your project.
    - Once found, it parses the file to extract color names in the first column of the palette array (skipping the first row used for mode names).
    - You can then type `--` inside `[ ... ]` to get suggestions like `--blue-100`, `--green-300`, and so on.
 
 3. **Dynamic Color Suggestions**
 
    - Wherever you type `--` (for example, in `bg[--` or `bd[1px solid --`), the extension will suggest color variables loaded from your theme file.
-   - No additional configuration is needed if your `styledwind.theme.ts` is located at the project root (or not deeply nested).
+   - No additional configuration is needed if your `ctrl.theme.ts` is located at the project root (or not deeply nested).
 
 4. **No Extra Language Setup**
-   - By default, `.swd.ts` files are treated as TypeScript (with `"files.associations": { "*.swd.ts": "typescript" }` in your VSCode settings).
-   - The extension only triggers autocompletion for files ending with `.swd.ts`.
+   - By default, `.ctrl.ts` files are treated as TypeScript (with `"files.associations": { "*.ctrl.ts": "typescript" }` in your VSCode settings).
+   - The extension only triggers autocompletion for files ending with `.ctrl.ts`.
 
 ## Installation
 
@@ -35,7 +35,7 @@ _(Alternatively, if you have a `.vsix` package, install it in VSCode via “Exte
 
 ## Usage
 
-1. Make sure you have a `styledwind.theme.ts` file in your project root (or somewhere discoverable by the extension). For example:
+1. Make sure you have a `ctrl.theme.ts` file in your project root (or somewhere discoverable by the extension). For example:
 
    ```ts
    export const palette = theme.palette([
@@ -46,7 +46,7 @@ _(Alternatively, if you have a `.vsix` package, install it in VSCode via “Exte
    ]);
    ```
 
-2. In any \*.swd.ts file:
+2. In any \*.ctrl.ts file:
 
    - Type something like:
 
@@ -60,11 +60,11 @@ _(Alternatively, if you have a `.vsix` package, install it in VSCode via “Exte
 
    - Type -- anywhere inside [...], such as bg[-- or bd[1px solid --, to see color variables like --blue-100, --green-200 from your theme file.
 
-3. The extension automatically updates suggestions if you move or rename your styledwind.theme.ts. If you have multiple files named styledwind.theme.ts, it picks the first one it finds in the workspace.
+3. The extension automatically updates suggestions if you move or rename your ctrl.theme.ts. If you have multiple files named ctrl.theme.ts, it picks the first one it finds in the workspace.
 
 # FAQ
 
-**Why do I need "files.associations": { "\*.swd.ts": "typescript" }"?** VSCode does not recognize \*.swd.tsas TypeScript out of the box. By associating it withtypescript`, you get proper syntax highlighting and TS language features.
+**Why do I need "files.associations": { "\*.ctrl.ts": "typescript" }"?** VSCode does not recognize \*.ctrl.tsas TypeScript out of the box. By associating it withtypescript`, you get proper syntax highlighting and TS language features.
 
 What if my theme file structure differs from the default pattern?
 The extension uses a regex approach to parse theme.palette([...]). If your code significantly deviates from the default array format, you might need to modify the parsing logic in the extension code.

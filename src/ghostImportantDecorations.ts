@@ -10,12 +10,12 @@ export const ghostImportantDecorationType = vscode.window.createTextEditorDecora
 /**
  * updateImportantDecorations:
  *  - เรียกเมื่อ text เอกสารเปลี่ยน หรือ active editor เปลี่ยน
- *  - ถ้าไม่ใช่ไฟล์ .swd.ts => clear decoration
+ *  - ถ้าไม่ใช่ไฟล์ .ctrl.ts => clear decoration
  *  - ถ้าใช่ => หา pattern "]!" => ใส่ ghost text "important"
  */
 export function updateImportantDecorations(editor: vscode.TextEditor) {
-  // 1) ถ้าไฟล์ไม่ใช่ .swd.ts => ล้าง decoration
-  if (!editor.document.fileName.endsWith('.swd.ts')) {
+  // 1) ถ้าไฟล์ไม่ใช่ .ctrl.ts => ล้าง decoration
+  if (!editor.document.fileName.endsWith('.ctrl.ts')) {
     editor.setDecorations(ghostImportantDecorationType, []);
     return;
   }

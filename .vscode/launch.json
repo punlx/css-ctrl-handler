@@ -2,8 +2,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Styledwind Intellisense Extension",
-      "type": "pwa-node",
+      "name": "Launch CSS-CTRL Handler Extension",
+      "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/out/extension.js",
       "outFiles": ["${workspaceFolder}/out/**/*.js"],

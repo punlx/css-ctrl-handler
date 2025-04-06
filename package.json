@@ -1,7 +1,7 @@
 {
-  "name": "styledwind-intellisense",
-  "displayName": "Styledwind CSS Intellisense",
-  "description": "VSCode Intellisense (Autocompletion) for *.swd.ts files in Styledwind",
+  "name": "css-ctrl-handler",
+  "displayName": "Css-CTRL Handler",
+  "description": "VSCode Intellisense (Autocompletion) for *.ctrl.ts files in CSS-CTRL",
   "version": "0.0.1",
   "publisher": "punlx",
   "engines": {
@@ -15,25 +15,25 @@
   "contributes": {
     "commands": [
       {
-        "command": "styledwind.createSwdCssAndGenerate",
-        "title": "Styledwind: Create .swd.css And Generate Type"
+        "command": "ctrl.createCtrlCssAndGenerate",
+        "title": "CSS-CTRL: Create .ctrl.css And Generate Type"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "Styledwind Intellisense Settings",
+      "title": "CSS-CTRL Handler Settings",
       "properties": {
-        "styledwindIntellisense.themeFile": {
+        "CssCtrlHandler.themeFile": {
           "type": "string",
-          "default": "styledwind.theme.ts",
-          "description": "Relative path to your styledwind.theme.ts"
+          "default": "ctrl.theme.ts",
+          "description": "Relative path to your ctrl.theme.ts"
         }
       }
     },
     "grammars": [
       {
-        "scopeName": "source.css.styledwind",
-        "path": "./syntaxes/styledwind.tmLanguage.json",
+        "scopeName": "source.css.ctrl",
+        "path": "./syntaxes/ctrl.tmLanguage.json",
         "injectTo": [
           "source.ts",
           "source.tsx"
@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/punlx/styledwind-intellisense"
+    "url": "https://github.com/punlx/css-ctrl-handler"
   },
   "scripts": {
     "compile": "tsc -p ."

@@ -4,7 +4,7 @@ import { variableAbbrSet } from './constants';
 
 /**
  * createSpacingProvider:
- * - Trigger เมื่อผู้ใช้พิมพ์ "--" ใน .swd.ts (ไม่เช็ค ab อีกแล้ว)
+ * - Trigger เมื่อผู้ใช้พิมพ์ "--" ใน .ctrl.ts (ไม่เช็ค ab อีกแล้ว)
  * - จับ pattern /([-\w&]+)\[.*?--$/
  * - Suggest spacing name list จาก spacingDict
  */
@@ -16,8 +16,8 @@ export function createSpacingProvider(spacingDict: Record<string, string>) {
     ],
     {
       provideCompletionItems(document, position) {
-        // เฉพาะไฟล์ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // เฉพาะไฟล์ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 

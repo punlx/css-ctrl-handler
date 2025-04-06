@@ -22,11 +22,11 @@ const groupB = new Set(['bd', 'bdl', 'bdt', 'bdr', 'bdb', 'ol', 'sd']);
 
 /**
  * initPaletteMap:
- * - เรียกตอน activate extension เพื่อลองหา styledwind.theme.ts ใน workspace
+ * - เรียกตอน activate extension เพื่อลองหา ctrl.theme.ts ใน workspace
  * - parse เก็บใน paletteMap
  */
 export async function initPaletteMap() {
-  const found = await vscode.workspace.findFiles('**/styledwind.theme.ts', '**/node_modules/**', 1);
+  const found = await vscode.workspace.findFiles('**/ctrl.theme.ts', '**/node_modules/**', 1);
   if (found.length > 0) {
     paletteMap = parseThemePaletteFull(found[0].fsPath);
   } else {
@@ -36,7 +36,7 @@ export async function initPaletteMap() {
 
 /**
  * createCssTsColorProvider:
- *  - ทำงานเฉพาะไฟล์ *.swd.ts (ต้องเป็น language=typescript, scheme=file)
+ *  - ทำงานเฉพาะไฟล์ *.ctrl.ts (ต้องเป็น language=typescript, scheme=file)
  *  - ใช้ DocumentColorProvider เพื่อแสดง swatch สี ตาม pattern /([-\w&]+)\[([^\]]+)\]/g
  *    ex. "bg[--blue-100]", "c[#ffffff]", "bd-c[red]", "bd[2px solid red]"
  *    หรือ "--&color[red]"
@@ -44,7 +44,7 @@ export async function initPaletteMap() {
 export function createCssTsColorProvider() {
   return vscode.languages.registerColorProvider(
     {
-      pattern: '**/*.swd.ts',
+      pattern: '**/*.ctrl.ts',
       scheme: 'file',
       language: 'typescript',
     },
@@ -54,9 +54,9 @@ export function createCssTsColorProvider() {
 
 class CssTsColorProvider implements vscode.DocumentColorProvider {
   provideDocumentColors(document: vscode.TextDocument): vscode.ColorInformation[] {
-    // (1) หา comment // styledwind mode: xxx
+    // (1) หา comment // css-ctrl mode: xxx
     const docText = document.getText();
-    const modeMatch = /\/\/\s*styledwind\s*mode:\s*(\w+)/.exec(docText);
+    const modeMatch = /\/\/\s*css-ctrl\s*mode:\s*(\w+)/.exec(docText);
     let mode: string | undefined;
     if (modeMatch) {
       mode = modeMatch[1]; // ex. "dark", "light", "dim"

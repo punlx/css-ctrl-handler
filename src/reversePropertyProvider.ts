@@ -78,8 +78,8 @@ export function createReversePropertyProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // แสดงเฉพาะไฟล์ *.swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // แสดงเฉพาะไฟล์ *.ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 
@@ -129,7 +129,7 @@ export function createReversePropertyProvider() {
         return matchingProps.map((propName) => {
           const abbr = reverseMap[propName];
           const item = new vscode.CompletionItem(propName, vscode.CompletionItemKind.Property);
-          item.detail = `Styledwind: abbr => ${abbr}`;
+          item.detail = `CSS-CTRL: abbr => ${abbr}`;
 
           // ระบุ range ที่จะถูกแทนด้วย abbr (แทน prefix)
           const replaceRange = new vscode.Range(

@@ -1,6 +1,6 @@
 import { abbrMap } from '../../constants';
 import { globalTypographyDict } from '../../extension';
-import { globalDefineMap } from '../createSwdCssCommand';
+import { globalDefineMap } from '../createCssCtrlCssCommand';
 import { convertCSSVariable } from '../helpers/convertCSSVariable';
 import { detectImportantSuffix } from '../helpers/detectImportantSuffix';
 import { separateStyleAndProperties } from '../helpers/separateStyleAndProperties';
@@ -18,7 +18,7 @@ export function parseBaseStyle(
   const { line: abbrLineNoBang, isImportant } = detectImportantSuffix(abbrLine);
   if (isConstContext && isImportant) {
     throw new Error(
-      `[SWD-ERR] !important is not allowed in @const (or theme.define) block. Found: "${abbrLine}"`
+      `[CSS-CTRL-ERR] !important is not allowed in @const (or theme.define) block. Found: "${abbrLine}"`
     );
   }
 
@@ -29,27 +29,27 @@ export function parseBaseStyle(
 
   if (styleAbbr in abbrMap && styleAbbr in globalDefineMap) {
     throw new Error(
-      `[SWD-ERR] "${styleAbbr}" is defined in both abbrMap and theme.define(...) - name collision not allowed.`
+      `[CSS-CTRL-ERR] "${styleAbbr}" is defined in both abbrMap and theme.define(...) - name collision not allowed.`
     );
   }
 
   if (styleAbbr.startsWith('--&')) {
     if (isConstContext) {
       throw new Error(
-        `[SWD-ERR] Local var "${styleAbbr}" not allowed inside @const/theme.define block.`
+        `[CSS-CTRL-ERR] Local var "${styleAbbr}" not allowed inside @const/theme.define block.`
       );
     }
     if (isQueryBlock) {
-      throw new Error(`[SWD-ERR] Local var "${styleAbbr}" not allowed inside @query block.`);
+      throw new Error(`[CSS-CTRL-ERR] Local var "${styleAbbr}" not allowed inside @query block.`);
     }
     if (isImportant) {
-      throw new Error(`[SWD-ERR] !important is not allowed with local var "${styleAbbr}".`);
+      throw new Error(`[CSS-CTRL-ERR] !important is not allowed with local var "${styleAbbr}".`);
     }
 
     const localVarName = styleAbbr.slice(3);
     if (!localVarName) {
       throw new Error(
-        `[SWD-ERR] Missing local var name after "--&". Usage: "--&<name>[value]" (abbrLine=${abbrLine})`
+        `[CSS-CTRL-ERR] Missing local var name after "--&". Usage: "--&<name>[value]" (abbrLine=${abbrLine})`
       );
     }
 
@@ -57,7 +57,9 @@ export function parseBaseStyle(
       styleDef.localVars = {};
     }
     if (styleDef.localVars[localVarName] != null) {
-      throw new Error(`[SWD-ERR] local var "${localVarName}" is already declared in this class.`);
+      throw new Error(
+        `[CSS-CTRL-ERR] local var "${localVarName}" is already declared in this class.`
+      );
     }
     styleDef.localVars[localVarName] = convertCSSVariable(propValue);
     return;
@@ -67,12 +69,14 @@ export function parseBaseStyle(
   if (isVariable) {
     if (isQueryBlock) {
       throw new Error(
-        `[SWD-ERR] Runtime variable ($var) not allowed inside @query block. Found: "${abbrLine}"`
+        `[CSS-CTRL-ERR] Runtime variable ($var) not allowed inside @query block. Found: "${abbrLine}"`
       );
     }
     const realAbbr = styleAbbr.slice(1);
     if (realAbbr === 'ty') {
-      throw new Error(`[SWD-ERR] "$ty[...]": cannot use runtime variable to reference typography.`);
+      throw new Error(
+        `[CSS-CTRL-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
+      );
     }
     const expansions = [`${realAbbr}[${propValue}]`];
     for (const ex of expansions) {
@@ -81,14 +85,14 @@ export function parseBaseStyle(
 
       if (val2.includes('--&')) {
         throw new Error(
-          `[SWD-ERR] $variable is not allowed to reference local var (--&xxx). Found: "${abbrLine}"`
+          `[CSS-CTRL-ERR] $variable is not allowed to reference local var (--&xxx). Found: "${abbrLine}"`
         );
       }
 
       const cssProp = abbrMap[abbr2 as keyof typeof abbrMap];
       if (!cssProp) {
         throw new Error(
-          `[SWD-ERROR] "${abbr2}" not defined in style abbreviation. (abbrLine=${abbrLine})`
+          `[CSS-CTRL-ERR] "${abbr2}" not defined in style abbreviation. (abbrLine=${abbrLine})`
         );
       }
       const finalVal = convertCSSVariable(val2);
@@ -110,7 +114,7 @@ export function parseBaseStyle(
     const typKey = propValue.trim();
     if (!globalTypographyDict[typKey]) {
       throw new Error(
-        `[SWD-ERR] Typography key "${typKey}" not found in theme.typography(...) (abbrLine=${abbrLine})`
+        `[CSS-CTRL-ERR] Typography key "${typKey}" not found in theme.typography(...) (abbrLine=${abbrLine})`
       );
     }
     // สมมติ theme.typography['body-1'] => "fs[16px] fw[400] lh[1.5] fm[Sarabun-Regular]"
@@ -130,16 +134,16 @@ export function parseBaseStyle(
       const tokens = propValue.split(/\s+/).filter(Boolean);
       if (tokens.length > 1) {
         throw new Error(
-          `[SWD-ERR] Multiple subKey not allowed. Found: "${styleAbbr}[${propValue}]"`
+          `[CSS-CTRL-ERR] Multiple subKey not allowed. Found: "${styleAbbr}[${propValue}]"`
         );
       }
       const subK = tokens[0];
       if (!subK) {
-        throw new Error(`[SWD-ERR] Missing subKey for "${styleAbbr}[...]"`);
+        throw new Error(`[CSS-CTRL-ERR] Missing subKey for "${styleAbbr}[...]"`);
       }
       const partialDef = globalDefineMap[styleAbbr][subK];
       if (!partialDef) {
-        throw new Error(`[SWD-ERR] "${styleAbbr}[${subK}]" not found in theme.define(...)`);
+        throw new Error(`[CSS-CTRL-ERR] "${styleAbbr}[${subK}]" not found in theme.define(...)`);
       }
       mergeStyleDef(styleDef, partialDef);
       return;
@@ -160,7 +164,7 @@ export function parseBaseStyle(
     const cssProp = abbrMap[abbr2 as keyof typeof abbrMap];
     if (!cssProp) {
       throw new Error(
-        `[SWD-ERR] "${abbr2}" not defined in style abbreviation. (abbrLine=${abbrLine})`
+        `[CSS-CTRL-ERR] "${abbr2}" not defined in style abbreviation. (abbrLine=${abbrLine})`
       );
     }
 

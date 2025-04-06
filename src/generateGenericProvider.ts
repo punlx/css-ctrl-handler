@@ -5,14 +5,14 @@ export const indentUnit = '  ';
 // generateGeneric.ts
 function generateGeneric(sourceCode: string): string {
   // -----------------------------------------------------------------------------
-  // 1) หา styled`...` (บล็อกแรก) ด้วย Regex ที่จับ prefix + เนื้อหาใน backtick
+  // 1) หา css`...` (บล็อกแรก) ด้วย Regex ที่จับ prefix + เนื้อหาใน backtick
   // -----------------------------------------------------------------------------
-  const styledRegex = /\b(styled\s*(?:<[^>]*>)?)`([^`]*)`/gs;
-  const match = styledRegex.exec(sourceCode);
+  const cssRegex = /\b(css\s*(?:<[^>]*>)?)`([^`]*)`/gs;
+  const match = cssRegex.exec(sourceCode);
   if (!match) return sourceCode;
 
-  const fullMatch = match[0]; // ตัวเต็ม "styled ... ` ... `"
-  const prefix = match[1]; // "styled" หรือ "styled<...>"
+  const fullMatch = match[0]; // ตัวเต็ม "css ... ` ... `"
+  const prefix = match[1]; // "css" หรือ "css<...>"
   const templateContent = match[2]; // โค้ดภายใน backtick
 
   // -----------------------------------------------------------------------------
@@ -335,7 +335,7 @@ function generateGeneric(sourceCode: string): string {
 }
 
 export const generateGenericProvider = vscode.commands.registerCommand(
-  'styledwind.generateGeneric',
+  'ctrl.generateGeneric',
   async () => {
     console.log('[DEBUG] command triggered!');
     const editor = vscode.window.activeTextEditor;
@@ -344,10 +344,10 @@ export const generateGenericProvider = vscode.commands.registerCommand(
       return;
     }
 
-    // ตรวจว่าไฟล์ลงท้าย .swd.ts
+    // ตรวจว่าไฟล์ลงท้าย .ctrl.ts
     const doc = editor.document;
-    if (!doc.fileName.endsWith('.swd.ts')) {
-      // vscode.window.showWarningMessage('This command is intended for *.swd.ts files');
+    if (!doc.fileName.endsWith('.ctrl.ts')) {
+      // vscode.window.showWarningMessage('This command is intended for *.ctrl.ts files');
       return;
     }
 

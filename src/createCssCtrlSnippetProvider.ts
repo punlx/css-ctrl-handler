@@ -1,9 +1,9 @@
-// createSwdSnippetProvider.ts
+// createCssCtrlSnippetProvider.ts
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { indentUnit } from './generateGenericProvider';
 
-export function createSwdSnippetProvider() {
+export function createCssCtrlSnippetProvider() {
   return vscode.languages.registerCompletionItemProvider(
     [
       { language: 'typescript', scheme: 'file' },
@@ -11,8 +11,8 @@ export function createSwdSnippetProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // 1) ต้องเป็น .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 1) ต้องเป็น .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 
@@ -20,25 +20,26 @@ export function createSwdSnippetProvider() {
         const lineText = document.lineAt(position).text;
         const textBeforeCursor = lineText.substring(0, position.character);
 
-        // 3) เช็กว่า token ล่าสุดเป็น "swdc" ใช่ไหม
-        if (!/\bswdc$/.test(textBeforeCursor)) {
+        // 3) เช็กว่า token ล่าสุดเป็น "ztrl" ใช่ไหม
+        if (!/\ztrl$/.test(textBeforeCursor)) {
           return;
         }
 
-        // ดึงชื่อไฟล์มาตัด ".swd.ts" ออก
-        const fileName = path.basename(document.fileName, '.swd.ts');
+        // ดึงชื่อไฟล์มาตัด ".ctrl.ts" ออก
+        const fileName = path.basename(document.fileName, '.ctrl.ts');
 
         // 4) สร้าง snippet
         const snippetItem = new vscode.CompletionItem(
-          'create styledwind template',
+          'create css-ctrl template',
           vscode.CompletionItemKind.Snippet
         );
-        snippetItem.filterText = 'swdc'; // ให้ VSCode จับ match กับ "swdc"
+        // snippet cssctrl
+        snippetItem.filterText = 'ztrl'; // ให้ VSCode จับ match กับ "ztrl"
 
         const snippet = new vscode.SnippetString(
-          `import { styled } from 'styledwindjs'
+          `import { css } from 'css-ctrl'
 
-export const ${fileName}css = styled<{  }>\`
+export const ${fileName}css = css<{  }>\`
 ${indentUnit}@scope ${fileName}
 
 ${indentUnit}\${1}
@@ -47,9 +48,9 @@ ${indentUnit}\${1}
         );
 
         snippetItem.insertText = snippet;
-        snippetItem.detail = 'Create a Styledwind template (swd)';
+        snippetItem.detail = 'Create a CSS-CTRL template (css-ctrl)';
         snippetItem.documentation = new vscode.MarkdownString(
-          'Insert a basic styledwind template snippet.'
+          'Insert a basic CSS-CTRL template snippet.'
         );
 
         return [snippetItem];

@@ -9,8 +9,8 @@ export function createDirectiveProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // 1) เฉพาะไฟล์ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 1) เฉพาะไฟล์ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 
@@ -33,27 +33,27 @@ export function createDirectiveProvider() {
           // อยู่ใน .box { ... } => แสดงเฉพาะ "@use"
           const useItem = new vscode.CompletionItem('use', vscode.CompletionItemKind.Keyword);
           useItem.insertText = 'use';
-          useItem.detail = 'styledwind directive (@use) inside class';
+          useItem.detail = 'CSS-CTRL directive (@use) inside class';
 
           const queryItem = new vscode.CompletionItem('query', vscode.CompletionItemKind.Keyword);
           queryItem.insertText = 'query';
-          queryItem.detail = 'styledwind directive (@query) inside class';
+          queryItem.detail = 'CSS-CTRL directive (@query) inside class';
           completions.push(useItem, queryItem);
         } else {
           // อยู่นอกบล็อก => แสดง @scope, @bind, @const
           const scopeItem = new vscode.CompletionItem('scope', vscode.CompletionItemKind.Keyword);
           scopeItem.insertText = 'scope';
-          scopeItem.detail = 'styledwind Scope directive';
+          scopeItem.detail = 'CSS-CTRL Scope directive';
           completions.push(scopeItem);
 
           const bindItem = new vscode.CompletionItem('bind', vscode.CompletionItemKind.Keyword);
           bindItem.insertText = 'bind';
-          bindItem.detail = 'styledwind Bind directive';
+          bindItem.detail = 'CSS-CTRL Bind directive';
           completions.push(bindItem);
 
           const constItem = new vscode.CompletionItem('const', vscode.CompletionItemKind.Keyword);
           constItem.insertText = 'const';
-          constItem.detail = 'styledwind Abbe Constant directive';
+          constItem.detail = 'CSS-CTRL Abbe Constant directive';
           completions.push(constItem);
         }
 

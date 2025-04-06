@@ -9,8 +9,8 @@ export function createUseConstProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // 1) ใช้เฉพาะ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 1) ใช้เฉพาะ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 
@@ -44,7 +44,7 @@ export function createUseConstProvider() {
         for (const cName of remaining) {
           const item = new vscode.CompletionItem(cName, vscode.CompletionItemKind.Variable);
           item.insertText = cName;
-          item.detail = 'styledwind @const directive name';
+          item.detail = 'Css-CTRL @const directive name';
           completions.push(item);
         }
 

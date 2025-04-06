@@ -22,7 +22,7 @@ export function parsePseudoElementStyle(
   for (const p of propsInPseudo) {
     const { line: tokenNoBang, isImportant } = detectImportantSuffix(p);
     if (isConstContext && isImportant) {
-      throw new Error(`[SWD-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
+      throw new Error(`[CSS-CTRL-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
     }
     const [abbr, val] = separateStyleAndProperties(tokenNoBang);
     if (!abbr) continue;
@@ -33,7 +33,7 @@ export function parsePseudoElementStyle(
         const localVarName = matchVar.replace('--&', '');
         if (!styleDef.localVars?.[localVarName]) {
           throw new Error(
-            `[SWD-ERR] Using local var "${matchVar}" in pseudo ${pseudoName} before it is declared in base.`
+            `[CSS-CTRL-ERR] Using local var "${matchVar}" in pseudo ${pseudoName} before it is declared in base.`
           );
         }
       }
@@ -41,7 +41,7 @@ export function parsePseudoElementStyle(
 
     if (abbr.startsWith('--&') && isImportant) {
       throw new Error(
-        `[SWD-ERR] !important is not allowed with local var (${abbr}) in pseudo ${pseudoName}.`
+        `[CSS-CTRL-ERR] !important is not allowed with local var (${abbr}) in pseudo ${pseudoName}.`
       );
     }
 
@@ -60,7 +60,7 @@ export function parsePseudoElementStyle(
       if (isVariable) {
         if (realAbbr === 'ty') {
           throw new Error(
-            `[SWD-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
+            `[CSS-CTRL-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
           );
         }
       }
@@ -71,7 +71,7 @@ export function parsePseudoElementStyle(
           const localVarName = usage.replace('--&', '');
           if (!styleDef.localVars?.[localVarName]) {
             throw new Error(
-              `[SWD-ERR] Using local var "${usage}" in pseudo ${pseudoName} before it is declared in base.`
+              `[CSS-CTRL-ERR] Using local var "${usage}" in pseudo ${pseudoName} before it is declared in base.`
             );
           }
         }
@@ -84,7 +84,7 @@ export function parsePseudoElementStyle(
         const typKey = val2.trim();
         if (!globalTypographyDict[typKey]) {
           throw new Error(
-            `[SWD-ERR] Typography key "${typKey}" not found in theme.typography(...) for pseudo ${pseudoName}.`
+            `[CSS-CTRL-ERR] Typography key "${typKey}" not found in theme.typography(...) for pseudo ${pseudoName}.`
           );
         }
         // เช่น "fs[16px] fw[400] ..."
@@ -111,7 +111,7 @@ export function parsePseudoElementStyle(
 
       const cProp = abbrMap[realAbbr as keyof typeof abbrMap];
       if (!cProp) {
-        throw new Error(`[SWD-ERR] "${realAbbr}" not found in abbrMap for pseudo-element ${pseudoName}.`);
+        throw new Error(`[CSS-CTRL-ERR] "${realAbbr}" not found in abbrMap for pseudo-element ${pseudoName}.`);
       }
 
       const finalVal = convertCSSVariable(val2);

@@ -9,7 +9,7 @@ export const ghostSpacingDecorationType = vscode.window.createTextEditorDecorati
 
 /**
  * spacingMap:
- *  เก็บข้อมูล spacing จาก styledwind.theme.ts
+ *  เก็บข้อมูล spacing จาก ctrl.theme.ts
  *  เช่น { "spacing-1":"12px", "spacing-2":"14px", "spacing-3":"16px", "spacing-4":"50%" }
  */
 let spacingMap: Record<string, string> = {};
@@ -26,13 +26,13 @@ export function initSpacingMap(dict: Record<string, string>) {
 /**
  * updateSpacingDecorations:
  *  - เรียกเมื่อ text ในเอกสารเปลี่ยน หรือเปลี่ยน active editor
- *  - ถ้าไม่ใช่ไฟล์ .swd.ts => เคลียร์ decoration
- *  - ถ้าเป็น .swd.ts => regex จับ "--xxx"
+ *  - ถ้าไม่ใช่ไฟล์ .ctrl.ts => เคลียร์ decoration
+ *  - ถ้าเป็น .ctrl.ts => regex จับ "--xxx"
  *    แล้วถ้า xxx อยู่ใน spacingMap => แสดง ghost text ":<value>"
  */
 export function updateSpacingDecorations(editor: vscode.TextEditor) {
-  // 1) เช็คว่าเป็น .swd.ts ไหม
-  if (!editor.document.fileName.endsWith('.swd.ts')) {
+  // 1) เช็คว่าเป็น .ctrl.ts ไหม
+  if (!editor.document.fileName.endsWith('.ctrl.ts')) {
     // ไม่ใช่ => ล้าง decoration
     editor.setDecorations(ghostSpacingDecorationType, []);
     return;

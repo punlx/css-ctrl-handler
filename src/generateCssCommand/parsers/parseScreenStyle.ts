@@ -15,7 +15,7 @@ export function parseScreenStyle(
 
   const commaIdx = inside.indexOf(',');
   if (commaIdx === -1) {
-    throw new Error(`[SWD-ERR] "screen" syntax error: ${abbrLine}`);
+    throw new Error(`[CSS-CTRL-ERR] "screen" syntax error: ${abbrLine}`);
   }
 
   let screenPart = inside.slice(0, commaIdx).trim();
@@ -26,7 +26,7 @@ export function parseScreenStyle(
       screenPart = globalBreakpointDict[screenPart];
     } else {
       throw new Error(
-        `[SWD-ERR] unknown breakpoint key "${screenPart}" not found in theme.breakpoint(...)`
+        `[CSS-CTRL-ERR] unknown breakpoint key "${screenPart}" not found in theme.breakpoint(...)`
       );
     }
   }
@@ -34,14 +34,14 @@ export function parseScreenStyle(
   const bracketOpen = screenPart.indexOf('[');
   const bracketClose = screenPart.indexOf(']');
   if (bracketOpen === -1 || bracketClose === -1) {
-    throw new Error(`[SWD-ERR] "screen" must contain something like min-w[600px]. Got ${screenPart}`);
+    throw new Error(`[CSS-CTRL-ERR] "screen" must contain something like min-w[600px]. Got ${screenPart}`);
   }
 
   const screenAbbr = screenPart.slice(0, bracketOpen).trim();
   const screenValue = screenPart.slice(bracketOpen + 1, bracketClose).trim();
   const screenProp = abbrMap[screenAbbr as keyof typeof abbrMap];
   if (!screenProp) {
-    throw new Error(`[SWD-ERR] "${screenAbbr}" not found in abbrMap or not min-w/max-w`);
+    throw new Error(`[CSS-CTRL-ERR] "${screenAbbr}" not found in abbrMap or not min-w/max-w`);
   }
 
   const mediaQuery = `(${screenProp}:${screenValue})`;
@@ -51,14 +51,14 @@ export function parseScreenStyle(
   for (const p of styleList) {
     const { line: tokenNoBang, isImportant } = detectImportantSuffix(p);
     if (isConstContext && isImportant) {
-      throw new Error(`[SWD-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
+      throw new Error(`[CSS-CTRL-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
     }
 
     const [abbr, val] = separateStyleAndProperties(tokenNoBang);
     if (!abbr) continue;
     const isVar = abbr.startsWith('$');
     if (isVar) {
-      throw new Error(`[SWD-ERR] $variable cannot use in screen. Found: "${abbrLine}"`);
+      throw new Error(`[CSS-CTRL-ERR] $variable cannot use in screen. Found: "${abbrLine}"`);
     }
 
     if (abbr.includes('--&')) {
@@ -67,7 +67,7 @@ export function parseScreenStyle(
         const localVarName = matchVar.replace('--&', '');
         if (!styleDef.localVars?.[localVarName]) {
           throw new Error(
-            `[SWD-ERR] Using local var "${matchVar}" in screen(...) before it is declared in base.`
+            `[CSS-CTRL-ERR] Using local var "${matchVar}" in screen(...) before it is declared in base.`
           );
         }
       }
@@ -79,7 +79,7 @@ export function parseScreenStyle(
       if (!abbr2) continue;
 
       if (abbr2.startsWith('--&') && isImportant) {
-        throw new Error(`[SWD-ERR] !important is not allowed with local var (${abbr2}) in screen.`);
+        throw new Error(`[CSS-CTRL-ERR] !important is not allowed with local var (${abbr2}) in screen.`);
       }
 
       if (val2.includes('--&')) {
@@ -88,7 +88,7 @@ export function parseScreenStyle(
           const localVarName = usage.replace('--&', '');
           if (!styleDef.localVars?.[localVarName]) {
             throw new Error(
-              `[SWD-ERR] Using local var "${usage}" in screen(...) before it is declared in base.`
+              `[CSS-CTRL-ERR] Using local var "${usage}" in screen(...) before it is declared in base.`
             );
           }
         }
@@ -101,7 +101,7 @@ export function parseScreenStyle(
         const typKey = val2.trim();
         if (!globalTypographyDict[typKey]) {
           throw new Error(
-            `[SWD-ERR] Typography key "${typKey}" not found in theme.typography(...) (screen).`
+            `[CSS-CTRL-ERR] Typography key "${typKey}" not found in theme.typography(...) (screen).`
           );
         }
         const styleStr = globalTypographyDict[typKey];
@@ -113,7 +113,7 @@ export function parseScreenStyle(
 
           const cProp = abbrMap[subAbbr as keyof typeof abbrMap];
           if (!cProp) {
-            throw new Error(`[SWD-ERR] "${subAbbr}" not found in abbrMap (screen) for ty[${typKey}].`);
+            throw new Error(`[CSS-CTRL-ERR] "${subAbbr}" not found in abbrMap (screen) for ty[${typKey}].`);
           }
           const finalVal = convertCSSVariable(subVal);
           screenProps[cProp] = finalVal + (tkImp ? ' !important' : '');
@@ -126,7 +126,7 @@ export function parseScreenStyle(
       // -------------------------------------------
       const cProp = abbrMap[abbr2 as keyof typeof abbrMap];
       if (!cProp) {
-        throw new Error(`[SWD-ERR] "${abbr2}" not found in abbrMap (screen).`);
+        throw new Error(`[CSS-CTRL-ERR] "${abbr2}" not found in abbrMap (screen).`);
       }
       if (val2.includes('--&')) {
         const replaced = val2.replace(/--&([\w-]+)/g, (_, varName) => {

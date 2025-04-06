@@ -18,27 +18,27 @@ export function parseSingleAbbr(
 
   if (isDefineContext && /^\$[\w-]+\[/.test(trimmed)) {
     throw new Error(
-      `[SWD-ERR] $variable is not allowed in theme.define block. Found: "${trimmed}"`
+      `[CSS-CTRL-ERR] $variable is not allowed in theme.define block. Found: "${trimmed}"`
     );
   }
 
   if (isConstContext && trimmed.startsWith('@query')) {
     throw new Error(
-      `[SWD-ERR] @query is not allowed in @const or theme.define() block. Found: "${trimmed}"`
+      `[CSS-CTRL-ERR] @query is not allowed in @const or theme.define() block. Found: "${trimmed}"`
     );
   }
 
   if (isQueryBlock && trimmed.startsWith('@query')) {
-    throw new Error(`[SWD-ERR] Nested @query is not allowed.`);
+    throw new Error(`[CSS-CTRL-ERR] Nested @query is not allowed.`);
   }
 
   if (isQueryBlock) {
     if (/^--&[\w-]+\[/.test(trimmed)) {
-      throw new Error(`[SWD-ERR] Local var not allowed inside @query block. Found: "${trimmed}"`);
+      throw new Error(`[CSS-CTRL-ERR] Local var not allowed inside @query block. Found: "${trimmed}"`);
     }
     if (/^\$[\w-]+\[/.test(trimmed)) {
       throw new Error(
-        `[SWD-ERR] Runtime variable ($var) not allowed inside @query block. Found: "${trimmed}"`
+        `[CSS-CTRL-ERR] Runtime variable ($var) not allowed inside @query block. Found: "${trimmed}"`
       );
     }
   }

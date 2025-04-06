@@ -16,12 +16,12 @@ export const ghostDecorationType = vscode.window.createTextEditorDecorationType(
 /**
  * updateDecorations:
  * เรียกใช้ทุกครั้งที่เอกสารเปลี่ยนหรือเปลี่ยน active editor
- * - ถ้าไม่ใช่ไฟล์ .swd.ts => ล้าง decoration
+ * - ถ้าไม่ใช่ไฟล์ .ctrl.ts => ล้าง decoration
  * - ถ้าใช่ => หาคำ abbr[...] ด้วย regex => ตรงกับ abbrMap => สร้าง DecorationOptions
  */
 export function updateDecorations(editor: vscode.TextEditor) {
-  // สมมุติเราต้องการให้โชว์ ghost text เฉพาะไฟล์ .swd.ts
-  if (!editor.document.fileName.endsWith('.swd.ts')) {
+  // สมมุติเราต้องการให้โชว์ ghost text เฉพาะไฟล์ .ctrl.ts
+  if (!editor.document.fileName.endsWith('.ctrl.ts')) {
     // ถ้าไม่ใช่ => เคลียร์ decoration
     editor.setDecorations(ghostDecorationType, []);
     return;

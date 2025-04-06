@@ -2,23 +2,23 @@
 import * as vscode from 'vscode';
 
 /**
- * createStyledwindThemeColorProvider:
- *   DocumentColorProvider ที่จับเฉพาะไฟล์ชื่อ "styledwind.theme.ts" แล้ว parse palette
+ * createCssCtrlThemeColorProvider:
+ *   DocumentColorProvider ที่จับเฉพาะไฟล์ชื่อ "ctrl.theme.ts" แล้ว parse palette
  *   เพื่อโชว์ swatch สี
  */
-export function createStyledwindThemeColorProvider() {
+export function createCssCtrlThemeColorProvider() {
   return vscode.languages.registerColorProvider(
     {
-      // ทำงานเฉพาะไฟล์ชื่อ styledwind.theme.ts (ในทุกโฟลเดอร์)
-      pattern: '**/styledwind.theme.ts',
+      // ทำงานเฉพาะไฟล์ชื่อ ctrl.theme.ts (ในทุกโฟลเดอร์)
+      pattern: '**/ctrl.theme.ts',
       scheme: 'file',
       language: 'typescript', // ไฟล์ .ts
     },
-    new StyledwindThemeColorProvider()
+    new CssCtrlThemeColorProvider()
   );
 }
 
-class StyledwindThemeColorProvider implements vscode.DocumentColorProvider {
+class CssCtrlThemeColorProvider implements vscode.DocumentColorProvider {
   /**
    * provideDocumentColors:
    *   สแกนไฟล์ หาพิกัดสี (#RRGGBB / #RGBA / #RGB ฯลฯ) ในบล็อก

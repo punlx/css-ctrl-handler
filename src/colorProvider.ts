@@ -6,7 +6,7 @@ import { colorAbbrSet } from './constants';
  * createColorProvider:
  * - Trigger เมื่อเจอ "--" หลัง abbr[...] เช่น "bg[--", "c[--", หรือใด ๆ
  * - ไม่เช็ค ab ใน set อีกต่อไป => ใครพิมพ์อะไรก็ตาม => Suggest color name จาก paletteMap
- * - ถ้าเจอ comment // styledwind mode: dark => ใช้สีจริง + swatch
+ * - ถ้าเจอ comment // css-ctrl mode: dark => ใช้สีจริง + swatch
  * - ถ้าไม่มี mode => แสดง icon color (ไม่มี swatch), label = colorName
  */
 export function createColorProvider(paletteMap: Record<string, Record<string, string>>) {
@@ -17,8 +17,8 @@ export function createColorProvider(paletteMap: Record<string, Record<string, st
     ],
     {
       provideCompletionItems(document, position) {
-        // 1) เฉพาะไฟล์ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 1) เฉพาะไฟล์ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 
@@ -26,9 +26,9 @@ export function createColorProvider(paletteMap: Record<string, Record<string, st
         const lineText = document.lineAt(position).text;
         const textBeforeCursor = lineText.substring(0, position.character);
 
-        // 3) หาว่ามี comment // styledwind mode: X
+        // 3) หาว่ามี comment // css-ctrl mode: X
         const docText = document.getText();
-        const modeRegex = /\/\/\s*styledwind\s*mode:\s*(\w+)/;
+        const modeRegex = /\/\/\s*css-ctrl\s*mode:\s*(\w+)/;
         const modeMatch = modeRegex.exec(docText);
         let mode: string | undefined;
         if (modeMatch) {

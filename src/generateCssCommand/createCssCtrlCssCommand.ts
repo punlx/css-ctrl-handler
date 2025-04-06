@@ -16,20 +16,19 @@ import { buildCssText } from './builders/buildCssText';
 ------------------------------------------------------------------------- */
 export const globalDefineMap: Record<string, Record<string, IStyleDefinition>> = {};
 
-
 /* -------------------------------------------------------------------------
    globalDefineMap – ถ้าต้องการฟีเจอร์ @const / theme.define ข้ามไฟล์
 ------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------
-   ฟังก์ชัน generateSwdCssFromSource - parse + generate CSS (ไม่มี Diagnostic)
+   ฟังก์ชัน generateCssCtrlCssFromSource - parse + generate CSS (ไม่มี Diagnostic)
 ------------------------------------------------------------------------- */
-export function generateSwdCssFromSource(sourceText: string): string {
+export function generateCssCtrlCssFromSource(sourceText: string): string {
   const { directives, classBlocks, constBlocks } = parseDirectives(sourceText);
 
   const scopeDir = directives.find((d) => d.name === 'scope');
   if (!scopeDir) {
-    throw new Error(`[SWD-ERR] You must provide "@scope <name>" in styled(...) block.`);
+    throw new Error(`[CSS-CTRL-ERR] You must provide "@scope <name>" in css(...) block.`);
   }
   const scopeName = scopeDir.value;
 
@@ -56,34 +55,34 @@ export function generateSwdCssFromSource(sourceText: string): string {
 }
 
 /* -------------------------------------------------------------------------
-   ฟังก์ชัน createSwdCssFile(doc)
+   ฟังก์ชัน createCssCtrlCssFile(doc)
    – ทำหน้าที่: 
-     1) แก้ import line ในไฟล์ .swd.ts
+     1) แก้ import line ในไฟล์ .ctrl.ts
      2) generate CSS (ถ้า parse error => throw)
-     3) เขียนไฟล์ .swd.css
+     3) เขียนไฟล์ .ctrl.css
    – **ไม่มี** การ set Diagnostic ในนี้
 ------------------------------------------------------------------------- */
-export async function createSwdCssFile(doc: vscode.TextDocument) {
-  if (!doc.fileName.endsWith('.swd.ts')) {
+export async function createCssCtrlCssFile(doc: vscode.TextDocument) {
+  if (!doc.fileName.endsWith('.ctrl.ts')) {
     return;
   }
 
   const fileName = path.basename(doc.fileName);
-  const base = fileName.replace(/\.swd\.ts$/, '');
+  const base = fileName.replace(/\.ctrl\.ts$/, '');
 
   const currentDir = path.dirname(doc.fileName);
-  const newCssFilePath = path.join(currentDir, base + '.swd.css');
+  const newCssFilePath = path.join(currentDir, base + '.ctrl.css');
   if (!fs.existsSync(newCssFilePath)) {
     fs.writeFileSync(newCssFilePath, '', 'utf8');
   }
 
-  const relImport = `./${base}.swd.css`;
+  const relImport = `./${base}.ctrl.css`;
   const importLine = `import '${relImport}';\n`;
 
   const fullText = doc.getText();
   const sanitizedBase = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const oldRegex = new RegExp(
-    `^import\\s+["'][^"']*${sanitizedBase}\\.swd\\.css["'];?\\s*(?:\\r?\\n)?`,
+    `^import\\s+["'][^"']*${sanitizedBase}\\.ctrl\\.css["'];?\\s*(?:\\r?\\n)?`,
     'm'
   );
   let newText = fullText.replace(oldRegex, '');
@@ -101,9 +100,9 @@ export async function createSwdCssFile(doc: vscode.TextDocument) {
   const sourceText = finalText.replace(importLine, '');
   let generatedCss: string;
   try {
-    generatedCss = generateSwdCssFromSource(sourceText);
+    generatedCss = generateCssCtrlCssFromSource(sourceText);
   } catch (err) {
-    vscode.window.showErrorMessage(`Styledwind parse error: ${(err as Error).message}`);
+    vscode.window.showErrorMessage(`CSS-CTRL parse error: ${(err as Error).message}`);
     throw err;
   }
 

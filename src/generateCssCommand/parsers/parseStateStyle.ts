@@ -20,7 +20,7 @@ export function parseStateStyle(
   for (const p of propsInState) {
     const { line: tokenNoBang, isImportant } = detectImportantSuffix(p);
     if (isConstContext && isImportant) {
-      throw new Error(`[SWD-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
+      throw new Error(`[CSS-CTRL-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
     }
 
     const [abbr, val] = separateStyleAndProperties(tokenNoBang);
@@ -32,7 +32,7 @@ export function parseStateStyle(
         const localVarName = matchVar.replace('--&', '');
         if (!styleDef.localVars?.[localVarName]) {
           throw new Error(
-            `[SWD-ERR] Using local var "${matchVar}" in state "${funcName}" before it is declared in base.`
+            `[CSS-CTRL-ERR] Using local var "${matchVar}" in state "${funcName}" before it is declared in base.`
           );
         }
       }
@@ -45,7 +45,7 @@ export function parseStateStyle(
 
       if (abbr2.startsWith('--&') && isImportant) {
         throw new Error(
-          `[SWD-ERR] !important is not allowed with local var (${abbr2}) in state ${funcName}.`
+          `[CSS-CTRL-ERR] !important is not allowed with local var (${abbr2}) in state ${funcName}.`
         );
       }
 
@@ -55,7 +55,7 @@ export function parseStateStyle(
           const localVarName = usage.replace('--&', '');
           if (!styleDef.localVars?.[localVarName]) {
             throw new Error(
-              `[SWD-ERR] Using local var "${usage}" in state "${funcName}" before it is declared in base.`
+              `[CSS-CTRL-ERR] Using local var "${usage}" in state "${funcName}" before it is declared in base.`
             );
           }
         }
@@ -65,7 +65,7 @@ export function parseStateStyle(
       const realAbbr = isVar ? abbr2.slice(1) : abbr2;
       if (isVar && realAbbr === 'ty') {
         throw new Error(
-          `[SWD-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
+          `[CSS-CTRL-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
         );
       }
       // -------------------------------------------
@@ -75,7 +75,7 @@ export function parseStateStyle(
         const typKey = val2.trim();
         if (!globalTypographyDict[typKey]) {
           throw new Error(
-            `[SWD-ERR] Typography key "${typKey}" not found in theme.typography(...) for state ${funcName}.`
+            `[CSS-CTRL-ERR] Typography key "${typKey}" not found in theme.typography(...) for state ${funcName}.`
           );
         }
         const styleStr = globalTypographyDict[typKey];
@@ -99,7 +99,7 @@ export function parseStateStyle(
 
       const cProp = abbrMap[realAbbr as keyof typeof abbrMap];
       if (!cProp) {
-        throw new Error(`[SWD-ERR] "${realAbbr}" not found in abbrMap for state ${funcName}.`);
+        throw new Error(`[CSS-CTRL-ERR] "${realAbbr}" not found in abbrMap for state ${funcName}.`);
       }
 
       let finalVal = convertCSSVariable(val2);

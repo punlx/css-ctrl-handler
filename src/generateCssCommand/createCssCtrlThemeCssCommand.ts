@@ -49,7 +49,7 @@ function parseKeyframeAbbr(
       styleAbbr = styleAbbr.slice(1);
       if (styleAbbr === 'ty') {
         throw new Error(
-          `[SWD-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
+          `[CSS-CTRL-ERR] "$ty[...]": cannot use runtime variable to reference typography.`
         );
       }
     }
@@ -123,7 +123,7 @@ interface IParseResult {
   keyframe: Record<string, string>;
 }
 
-function parseSwdThemeSource(sourceText: string): IParseResult {
+function parseCssCtrlThemeSource(sourceText: string): IParseResult {
   const result: IParseResult = {
     palette: null,
     variable: {},
@@ -180,8 +180,8 @@ function parseSwdThemeSource(sourceText: string): IParseResult {
   return result;
 }
 
-function generateSwdThemeCssFromSource(sourceText: string): string {
-  const parsed = parseSwdThemeSource(sourceText);
+function generateCssCtrlThemeCssFromSource(sourceText: string): string {
+  const parsed = parseCssCtrlThemeSource(sourceText);
 
   let css = '';
   if (parsed.palette) {
@@ -197,8 +197,8 @@ function generateSwdThemeCssFromSource(sourceText: string): string {
   return css;
 }
 
-export async function createSwdThemeCssFile(doc: vscode.TextDocument) {
-  if (!doc.fileName.endsWith('styledwind.theme.ts')) {
+export async function createCssCtrlThemeCssFile(doc: vscode.TextDocument) {
+  if (!doc.fileName.endsWith('ctrl.theme.ts')) {
     return;
   }
 
@@ -230,9 +230,9 @@ export async function createSwdThemeCssFile(doc: vscode.TextDocument) {
 
   let generatedCss: string;
   try {
-    generatedCss = generateSwdThemeCssFromSource(finalText.replace(importLine, ''));
+    generatedCss = generateCssCtrlThemeCssFromSource(finalText.replace(importLine, ''));
   } catch (err) {
-    vscode.window.showErrorMessage(`Styledwind theme parse error: ${(err as Error).message}`);
+    vscode.window.showErrorMessage(`CSS-CTRL theme parse error: ${(err as Error).message}`);
     throw err;
   }
 

@@ -5,7 +5,7 @@ import { abbrMap } from './constants';
 
 /**
  * createFontProvider:
- *  - Suggest font name (เช่น "display-1") เมื่อพิมพ์ f[ ในไฟล์ .swd.ts
+ *  - Suggest font name (เช่น "display-1") เมื่อพิมพ์ f[ ในไฟล์ .ctrl.ts
  *  - item.detail = ชื่อ font key
  *  - item.documentation = สร้างจากการ parse "fs[22px] fw[500]" => "font-size:22px;\nfont-weight:500;"
  */
@@ -18,8 +18,8 @@ export function createFontProvider(fontDict: Record<string, string>) {
     ],
     {
       provideCompletionItems(document, position) {
-        // เช็คไฟล์ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // เช็คไฟล์ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 

@@ -1,6 +1,6 @@
 export function parseVariableAbbr(abbr: string): { baseVarName: string; suffix: string } {
   if (!abbr.startsWith('$')) {
-    throw new Error(`[SWD-ERR] Only $variable is supported. Got "${abbr}"`);
+    throw new Error(`[CSS-CTRL-ERR] Only $variable is supported. Got "${abbr}"`);
   }
   const varNameFull = abbr.slice(1);
   let baseVarName = varNameFull;

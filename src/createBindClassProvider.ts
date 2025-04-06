@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 
 /**
  * createBindClassProvider:
- * - Trigger: เมื่อผู้ใช้พิมพ์ '.' ในไฟล์ .swd.ts
+ * - Trigger: เมื่อผู้ใช้พิมพ์ '.' ในไฟล์ .ctrl.ts
  * - เช็คว่าบรรทัดนั้นมี '@bind' ไหม
  * - หารายชื่อคลาสทั้งหมดในไฟล์ (via getAllClasses)
  * - หาคลาสที่บรรทัดนั้นใช้ไปแล้ว (via getUsedClassesInLine)
@@ -17,8 +17,8 @@ export function createBindClassProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // 1) เฉพาะไฟล์ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 1) เฉพาะไฟล์ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 

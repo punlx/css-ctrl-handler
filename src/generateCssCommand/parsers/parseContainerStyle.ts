@@ -15,7 +15,7 @@ export function parseContainerStyle(
   let inside = abbrLine.slice(openParenIdx + 1, -1).trim();
   const commaIdx = inside.indexOf(',');
   if (commaIdx === -1) {
-    throw new Error(`[SWD-ERR] "container" syntax error: ${abbrLine}`);
+    throw new Error(`[CSS-CTRL-ERR] "container" syntax error: ${abbrLine}`);
   }
 
   let containerPart = inside.slice(0, commaIdx).trim();
@@ -27,7 +27,7 @@ export function parseContainerStyle(
       containerPart = globalBreakpointDict[containerPart];
     } else {
       throw new Error(
-        `[SWD-ERR] unknown breakpoint key "${containerPart}" not found in theme.breakpoint(...) for container(...)`
+        `[CSS-CTRL-ERR] unknown breakpoint key "${containerPart}" not found in theme.breakpoint(...) for container(...)`
       );
     }
   }
@@ -35,14 +35,14 @@ export function parseContainerStyle(
   const bracketOpen = containerPart.indexOf('[');
   const bracketClose = containerPart.indexOf(']');
   if (bracketOpen === -1 || bracketClose === -1) {
-    throw new Error(`[SWD-ERR] "container" must contain e.g. min-w[600px]. Got ${containerPart}`);
+    throw new Error(`[CSS-CTRL-ERR] "container" must contain e.g. min-w[600px]. Got ${containerPart}`);
   }
 
   const cAbbr = containerPart.slice(0, bracketOpen).trim();
   const cValue = containerPart.slice(bracketOpen + 1, bracketClose).trim();
   const cProp = abbrMap[cAbbr as keyof typeof abbrMap];
   if (!cProp) {
-    throw new Error(`[SWD-ERR] "${cAbbr}" not found in abbrMap for container.`);
+    throw new Error(`[CSS-CTRL-ERR] "${cAbbr}" not found in abbrMap for container.`);
   }
 
   const containerQuery = `(${cProp}:${cValue})`;
@@ -53,14 +53,14 @@ export function parseContainerStyle(
   for (const p of propsList) {
     const { line: tokenNoBang, isImportant } = detectImportantSuffix(p);
     if (isConstContext && isImportant) {
-      throw new Error(`[SWD-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
+      throw new Error(`[CSS-CTRL-ERR] !important is not allowed in @const block. Found: "${abbrLine}"`);
     }
 
     const [abbr, val] = separateStyleAndProperties(tokenNoBang);
     if (!abbr) continue;
     const isVar = abbr.startsWith('$');
     if (isVar) {
-      throw new Error(`[SWD-ERR] $variable cannot use in container. Found: "${abbrLine}"`);
+      throw new Error(`[CSS-CTRL-ERR] $variable cannot use in container. Found: "${abbrLine}"`);
     }
     // ตรวจ local var, etc. (เหมือนเดิม)
     if (abbr.includes('--&')) {
@@ -69,7 +69,7 @@ export function parseContainerStyle(
         const localVarName = matchVar.replace('--&', '');
         if (!styleDef.localVars?.[localVarName]) {
           throw new Error(
-            `[SWD-ERR] Using local var "${matchVar}" in container(...) before it is declared in base.`
+            `[CSS-CTRL-ERR] Using local var "${matchVar}" in container(...) before it is declared in base.`
           );
         }
       }
@@ -88,7 +88,7 @@ export function parseContainerStyle(
         const typKey = val2.trim();
         if (!globalTypographyDict[typKey]) {
           throw new Error(
-            `[SWD-ERR] Typography key "${typKey}" not found in theme.typography(...) (container).`
+            `[CSS-CTRL-ERR] Typography key "${typKey}" not found in theme.typography(...) (container).`
           );
         }
         // เช่น "fs[16px] fw[400] ..."
@@ -104,7 +104,7 @@ export function parseContainerStyle(
 
           const cProp2 = abbrMap[subAbbr as keyof typeof abbrMap];
           if (!cProp2) {
-            throw new Error(`[SWD-ERR] "${subAbbr}" not found in abbrMap (container). (ty[${typKey}])`);
+            throw new Error(`[CSS-CTRL-ERR] "${subAbbr}" not found in abbrMap (container). (ty[${typKey}])`);
           }
           let finalVal = convertCSSVariable(subVal);
           containerProps[cProp2] = finalVal + (tkImp ? ' !important' : '');
@@ -117,7 +117,7 @@ export function parseContainerStyle(
       // -------------------------------------------
       if (abbr2.startsWith('--&') && isImportant) {
         throw new Error(
-          `[SWD-ERR] !important is not allowed with local var (${abbr2}) in container.`
+          `[CSS-CTRL-ERR] !important is not allowed with local var (${abbr2}) in container.`
         );
       }
 
@@ -127,7 +127,7 @@ export function parseContainerStyle(
           const localVarName = usage.replace('--&', '');
           if (!styleDef.localVars?.[localVarName]) {
             throw new Error(
-              `[SWD-ERR] Using local var "${usage}" in container(...) before it is declared in base.`
+              `[CSS-CTRL-ERR] Using local var "${usage}" in container(...) before it is declared in base.`
             );
           }
         }
@@ -135,7 +135,7 @@ export function parseContainerStyle(
 
       const cProp2 = abbrMap[abbr2 as keyof typeof abbrMap];
       if (!cProp2) {
-        throw new Error(`[SWD-ERR] "${abbr2}" not found in abbrMap (container).`);
+        throw new Error(`[CSS-CTRL-ERR] "${abbr2}" not found in abbrMap (container).`);
       }
       if (val2.includes('--&')) {
         const replaced = val2.replace(/--&([\w-]+)/g, (_, varName) => {

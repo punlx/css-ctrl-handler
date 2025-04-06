@@ -15,8 +15,8 @@ export function createDefineTopKeyProvider(defineMap: Record<string, string[]>) 
     ],
     {
       provideCompletionItems(document, position) {
-        // 1) เฉพาะไฟล์ .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 1) เฉพาะไฟล์ .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 

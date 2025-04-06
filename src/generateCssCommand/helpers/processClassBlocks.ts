@@ -17,7 +17,7 @@ export function processClassBlocks(
 
     if (localClasses.has(clsName)) {
       throw new Error(
-        `[SWD-ERR] Duplicate class ".${clsName}" in scope "${scopeName}" (same file).`
+        `[CSS-CTRL-ERR] Duplicate class ".${clsName}" in scope "${scopeName}" (same file).`
       );
     }
     localClasses.add(clsName);
@@ -41,7 +41,7 @@ export function processClassBlocks(
     for (const ln of lines) {
       if (ln.startsWith('@use ')) {
         if (usedConstNames.length > 0) {
-          throw new Error(`[SWD-ERR] Multiple @use lines in ".${clsName}".`);
+          throw new Error(`[CSS-CTRL-ERR] Multiple @use lines in ".${clsName}".`);
         }
         const tokens = ln.replace('@use', '').trim().split(/\s+/);
         usedConstNames = tokens;
@@ -52,7 +52,7 @@ export function processClassBlocks(
     if (usedConstNames.length > 0) {
       for (const cName of usedConstNames) {
         if (!constMap.has(cName)) {
-          throw new Error(`[SWD-ERR] @use refers to unknown const "${cName}".`);
+          throw new Error(`[CSS-CTRL-ERR] @use refers to unknown const "${cName}".`);
         }
         const partialDef = constMap.get(cName)!;
         mergeStyleDef(classStyleDef, partialDef);
@@ -93,12 +93,12 @@ export function processClassBlocks(
 
       for (const cName of usedConstNamesQ) {
         if (!constMap.has(cName)) {
-          throw new Error(`[SWD-ERR] @use unknown const "${cName}" in @query block.`);
+          throw new Error(`[CSS-CTRL-ERR] @use unknown const "${cName}" in @query block.`);
         }
         const partialDef = constMap.get(cName)!;
         if (partialDef.hasRuntimeVar) {
           throw new Error(
-            `[SWD-ERR] @use "${cName}" has $variable, not allowed inside @query block.`
+            `[CSS-CTRL-ERR] @use "${cName}" has $variable, not allowed inside @query block.`
           );
         }
         mergeStyleDef(qBlock.styleDef, partialDef);
@@ -112,7 +112,7 @@ export function processClassBlocks(
       for (const usedVar of (classStyleDef as any)._usedLocalVars) {
         if (!classStyleDef.localVars || !(usedVar in classStyleDef.localVars)) {
           throw new Error(
-            `[SWD-ERR] local var "${usedVar}" is used but not declared in ".${clsName}" (scope="${scopeName}").`
+            `[CSS-CTRL-ERR] local var "${usedVar}" is used but not declared in ".${clsName}" (scope="${scopeName}").`
           );
         }
       }
@@ -124,7 +124,7 @@ export function processClassBlocks(
           if (!qStyleDef.localVars || !(usedVar in qStyleDef.localVars)) {
             const sel = queries[i].selector;
             throw new Error(
-              `[SWD-ERR] local var "${usedVar}" is used but not declared in query "${sel}" of ".${clsName}".`
+              `[CSS-CTRL-ERR] local var "${usedVar}" is used but not declared in query "${sel}" of ".${clsName}".`
             );
           }
         }

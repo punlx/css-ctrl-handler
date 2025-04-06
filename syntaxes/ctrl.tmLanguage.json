@@ -1,11 +1,11 @@
 {
-  "name": "Styledwind CSS inside TS template",
-  "scopeName": "source.css.styledwind",
+  "name": "CSS-CTRL Hanlder TS template",
+  "scopeName": "source.css.ctrl",
   "injectionSelector": "L:source.ts",
   "patterns": [
     {
       "name": "meta.styled.block",
-      "begin": "styled\\s*<\\{[^}]+}>`",
+      "begin": "css\\s*<\\{[^}]+}>`",
       "end": "`",
       "patterns": [
         {
@@ -78,14 +78,14 @@
       ]
     },
     {
-      "name": "styledwind.template",
-      "begin": "(styled)(\\s*<[^>]*>)?(\\s*`)",
+      "name": "ctrl.template",
+      "begin": "(css)(\\s*<[^>]*>)?(\\s*`)",
       "beginCaptures": {
         "1": {
-          "name": "keyword.control.styledwind.ts"
+          "name": "keyword.control.ctrl.ts"
         },
         "2": {
-          "name": "meta.typeparameters.styledwind.ts"
+          "name": "meta.typeparameters.ctrl.ts"
         },
         "3": {
           "name": "punctuation.definition.template-expression.begin.ts"
@@ -99,7 +99,7 @@
       },
       "patterns": [
         {
-          "name": "styledwind.interpolation",
+          "name": "ctrl.interpolation",
           "begin": "\\$\\{",
           "beginCaptures": {
             "0": {

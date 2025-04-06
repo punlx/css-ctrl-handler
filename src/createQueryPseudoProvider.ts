@@ -11,8 +11,8 @@ export function createQueryPseudoProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // 2) ตรวจเฉพาะไฟล์ .swd.ts (ถ้าต้องการ)
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // 2) ตรวจเฉพาะไฟล์ .ctrl.ts (ถ้าต้องการ)
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 

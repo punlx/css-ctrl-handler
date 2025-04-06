@@ -10,8 +10,8 @@ const modeList = ['dark', 'light', 'dim'];
 /**
  * createModeSuggestionProvider:
  *  - เป็น CompletionItemProvider
- *  - ทำงานเฉพาะไฟล์ .swd.ts (language=typescript)
- *  - จับ pattern `// styledwind mode:` แล้ว Suggest รายชื่อโหมด
+ *  - ทำงานเฉพาะไฟล์ .ctrl.ts (language=typescript)
+ *  - จับ pattern `// ctrl mode:` แล้ว Suggest รายชื่อโหมด
  */
 export function createModeSuggestionProvider() {
   return vscode.languages.registerCompletionItemProvider(
@@ -21,8 +21,8 @@ export function createModeSuggestionProvider() {
     ],
     {
       provideCompletionItems(document, position) {
-        // (1) เช็คว่าไฟล์ลงท้ายด้วย .swd.ts
-        if (!document.fileName.endsWith('.swd.ts')) {
+        // (1) เช็คว่าไฟล์ลงท้ายด้วย .ctrl.ts
+        if (!document.fileName.endsWith('.ctrl.ts')) {
           return;
         }
 
@@ -31,10 +31,10 @@ export function createModeSuggestionProvider() {
         const textBeforeCursor = lineText.substring(0, position.character);
 
         // (3) จับ regex ว่า user พิมพ์
-        //     // styledwind mode:  (แล้วตามด้วยอะไรก็ได้)
-        //     เช่น "// styledwind mode:"
-        //     ตัวอย่าง: /\/\/\s*styledwind\s+mode:\s*[\w-]*$/
-        const regex = /\/\/\s*styledwind\s+mode:\s*[\w-]*$/;
+        //     // css-ctrl mode:  (แล้วตามด้วยอะไรก็ได้)
+        //     เช่น "// css-ctrl mode:"
+        //     ตัวอย่าง: /\/\/\s*css-ctrl\s+mode:\s*[\w-]*$/
+        const regex = /\/\/\s*css-ctrl\s+mode:\s*[\w-]*$/;
         if (!regex.test(textBeforeCursor)) {
           return;
         }
@@ -43,7 +43,7 @@ export function createModeSuggestionProvider() {
         const items: vscode.CompletionItem[] = modeList.map((m) => {
           const ci = new vscode.CompletionItem(m, vscode.CompletionItemKind.EnumMember);
           ci.insertText = m; // user เลือก => แทรกคำว่า m
-          ci.detail = `Styledwind mode: ${m}`;
+          ci.detail = `CSS-CTRL mode: ${m}`;
           ci.documentation = new vscode.MarkdownString(`Switch to "${m}" mode.`);
           return ci;
         });
