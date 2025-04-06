@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { createScopeSuggestionProvider } from './scopeSuggestionProvider';
 
 // --- (NEW) import createCssCtrlThemeCssFile ---
 import { createCssCtrlThemeCssFile } from './generateCssCommand/createCssCtrlThemeCssCommand';
@@ -117,8 +118,10 @@ export async function activate(context: vscode.ExtensionContext) {
   const defineProviderDisposable = createDefineProvider(defineMap);
   const defineTopKeyProviderDisposable = createDefineTopKeyProvider(defineMap);
   const queryPseudoProvider = createQueryPseudoProvider();
+  const scopeProvider = createScopeSuggestionProvider();
 
   context.subscriptions.push(
+    scopeProvider,
     localVarProviderDisposable,
     bracketProvider,
     reversePropProvider,

@@ -1,3 +1,5 @@
+// src/generateCssCommand/transformers/transFormVariables.ts
+
 import { IStyleDefinition } from '../types';
 
 export function transFormVariables(
@@ -5,8 +7,13 @@ export function transFormVariables(
   scopeName: string,
   className: string
 ): void {
-  const scopePart = scopeName === 'none' ? className : `${scopeName}_${className}`;
+  // (1) เช็คถ้า scopeName === 'hash' => ปฏิบัติแบบเดียวกับ 'none'
+  const isHashScope = scopeName === 'hash';
+  const scopePart = scopeName === 'none' || isHashScope ? className : `${scopeName}_${className}`;
 
+  // -----------------------------
+  // Base variables (varBase)
+  // -----------------------------
   if (styleDef.varBase) {
     for (const varName in styleDef.varBase) {
       const rawValue = styleDef.varBase[varName];
@@ -24,6 +31,9 @@ export function transFormVariables(
     }
   }
 
+  // -----------------------------
+  // State variables (varStates)
+  // -----------------------------
   if (styleDef.varStates) {
     for (const stName in styleDef.varStates) {
       const varsOfThatState: Record<string, string> = styleDef.varStates[stName] || {};
@@ -47,6 +57,9 @@ export function transFormVariables(
     }
   }
 
+  // -----------------------------
+  // Pseudo variables (varPseudos)
+  // -----------------------------
   if (styleDef.varPseudos) {
     for (const pseudoName in styleDef.varPseudos) {
       const pseudoVars: Record<string, string> = styleDef.varPseudos[pseudoName] || {};

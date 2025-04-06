@@ -9,7 +9,10 @@ export function transformLocalVariables(
     return;
   }
 
-  const scopePart = scopeName === 'none' ? className : `${scopeName}_${className}`;
+  // (NEW) เหมือนกัน
+  const isHashScope = scopeName === 'hash';
+  const scopePart = scopeName === 'none' || isHashScope ? className : `${scopeName}_${className}`;
+
   const localVarProps: Record<string, string> = {};
 
   for (const varName in styleDef.localVars) {

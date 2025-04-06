@@ -7,3 +7,7 @@ $card[] <-- ยังแสดง suggestion card1
 --&card[] <-- ยังแสดง suggestion card1
 DONE!
 --
+
+hover($bg[--&color]) <-- ใช้ $variable กับ --& ใน hover, before, screen ไม่ได้
+
+--
